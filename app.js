@@ -47,6 +47,10 @@ if (app.get('env') == 'development') {
   app.use(require('connect-browser-sync')(bs));
 }
 
+// mongoose setup
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/todos');
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
