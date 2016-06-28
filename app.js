@@ -10,7 +10,8 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var todos = require('./routes/todos'); // load our new router
+var todos = require('./routes/todos/index');
+var todosAPI = require('./routes/todos/api');
 
 var app = express();
 
@@ -62,6 +63,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/todos', todos);
+app.use('/api/todos', todosAPI);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
