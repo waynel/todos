@@ -10,7 +10,45 @@ router.route('/')
       res.json(todos);
     })
     .catch(next)
+      .error(console.error);
+  })
+  .post(function(req, res, next) {
+    var todo = new Todo();
+    todo.text = req.body.text;
+    todo.saveAsync()
+    .then(function(todo) {
+      console.log("success");
+      res.json({'status': 'success', 'todo': todo });
+    })
+    .catch(function(e) {
+      console.log("fail");
+      res.json({'status': 'error', 'error': e });
+    })
     .error(console.error);
   });
 
-  module.exports = router
+router.route('/:id')
+  .get(function(req, res, next) {
+    Todo.findOneAsync({_id: req.params.id}, {text: 1, done: 1})
+    .then(function(todo) {
+      res.json(todo);
+    })
+    .catch(next)
+    .error(console.error);
+  })
+  .put(function(req, res, next) {
+    var todo = {};
+    var prop;
+    for (prop in req.body) {
+      todo[prop] = req.body[prop];
+    }
+    Todo.updateAsync({_id: req.params.id}, todo)
+    .then(function(updatedTodo) {
+      return res.json({'status': 'success', 'todo': updatedTodo });
+    })
+    .catch(function(e){
+      return res.status(400).json({'status': 'fail', 'error':e });
+    });
+  });
+
+module.exports = router
