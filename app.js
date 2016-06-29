@@ -12,7 +12,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var todos = require('./routes/todos/index');
 var todosAPI = require('./routes/todos/api');
-
+  
 var app = express();
 
 // view engine setup
@@ -32,6 +32,9 @@ app.use (
 );
 
 // browserify setup
+browserify.settings({
+  transform: ['hbsfy']
+});
 app.get('/javascripts/bundle.js', browserify('./client/script.js'));
 
 // browser sync setup
