@@ -44,6 +44,13 @@ $(function() {
       e.preventDefault();  
     }
   });
+  $("ul").on('click', 'li a', function() {
+    var $this = $(this),
+    $input = $this[0],
+    $li = $this.parent(),
+    id = $li.attr('id');
+    deleteTodo(id, deleteTodoLi($li));
+  });
 });
 
 var addTodo = function() {
@@ -74,4 +81,22 @@ var updateTodo = function(id, data, cb) {
       cb();
     }
   });
+};
+
+var deleteTodo = function(id, cb) {
+  $.ajax({
+    url: '/api/todos/'+id,
+    type: 'DELETE',
+    data: {
+      id: id
+    },
+    dataType: 'json',
+    success: function(data) {
+      cb();
+    }
+  });
+};
+
+var deleteTodoLi = function($li) {
+  $li.remove();
 };
