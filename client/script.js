@@ -11,8 +11,38 @@ $(function() {
       return false;
     }
   });
-  $('input').on('click', function() {
-    $(this.nextElementSibling).toggleClass('checked');
+  $("ul").on('change', 'li :checkbox', function() {
+    var $this = $(this),
+        $input = $this[0],
+        $li = $this.parent(),
+        id = $li.attr('id'),
+        checked = $input.checked,
+        data = { done: checked };
+    updateTodo(id, data, function(d) {
+      $this.next().toggleClass("checked");
+    });
+  });
+  $('ul').on('keydown', 'li span', function(e) {
+    var $this = $(this),
+        $span = $this[0],
+        $li = $this.parent(),
+        id = $li.attr('id'),
+        key = e.keyCode,
+        target = e.target,
+        text = $span.innerHTML,
+        data = { text: text };
+    $this.addClass("editing");
+    if(key === 27) { //escape key
+      $this.removeClass("editing");
+      document.execCommand('undo');
+      target.blur();
+    } else if(key === 13) { //enter key
+      updateTodo(id, data, function(d) {
+        $this.removeClass("editing");
+        target.blur();
+      });
+      e.preventDefault();  
+    }
   });
 });
 
@@ -30,6 +60,18 @@ var addTodo = function() {
       var newLiHtml = todoTemplate(todo);
       $('form + ul').append(newLiHtml);
       $('#add-todo-text').val('');
+    }
+  });
+};
+
+var updateTodo = function(id, data, cb) {
+  $.ajax({
+    url: '/api/todos/'+id,
+    type: 'PUT',
+    data: data,
+    dataType: 'json',
+    success: function(data) {
+      cb();
     }
   });
 };
